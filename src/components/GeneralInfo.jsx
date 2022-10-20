@@ -1,66 +1,67 @@
 import React from 'react';
-import Education from './Education';
+import propTypes from 'prop-types';
 
-class GeneralInfo extends React.Component {
+export default class GeneralInfo extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       name: '',
       email: '',
       dateOfBirth: '',
       generals: [],
-      finished: false,
+      section: 'general',
     };
-  };
+  }
 
   changeHandler(e) {
     this.setState({
       [e.target.name]: e.target.value,
     });
-  };
+  }
 
   submitHandler(e) {
     e.preventDefault();
 
-    this.setState({
-      name: '',
-      email: '',
-      dateOfBirth: '',
-      generals: this.state.generals.concat({
-        name: this.state.name, 
-        email: this.state.email, 
-        dateOfBirth: this.state.dateOfBirth,
-      }),
-      finished: true,
-    }, () => console.log(this.state));
-  };
+    const {
+      name, email, dateOfBirth,
+    } = this.state;
 
-  isFinished() {
-    if (this.state.finished) {
-      return <Education fields={this.state.generals}/>;
-    }
-    return (
-      <div id='general-info'>
-        <h2>General info</h2>
-        <form onSubmit={this.submitHandler.bind(this)}>
-          <input name='name' type='text' placeholder='Full name' onChange={this.changeHandler.bind(this)} />
-          <input name='email' type='email' placeholder='email' onChange={this.changeHandler.bind(this)} />
-          <input name='dateOfBirth' type='date' placeholder='Date of birth' onChange={this.changeHandler.bind(this)} />
-          <button>Submit</button>
-        </form>
-      </div>
-    )
+    this.setState((prevState) => ({
+      name,
+      email,
+      dateOfBirth,
+      generals: prevState.generals.concat({
+        name,
+        email,
+        dateOfBirth,
+      }),
+      section: 'education',
+    }), () => {
+      const { handleSection, handleInfo } = this.props;
+      const { section, generals } = this.state;
+
+      handleInfo('generalInfo', generals);
+      handleSection(section);
+    });
   }
 
   render() {
-
     return (
-      <div>
-        {this.isFinished()}
+      <div id="general-info">
+        <h2>General info</h2>
+        <form onSubmit={this.submitHandler.bind(this)}>
+          <input name="name" type="text" placeholder="Full name" onChange={this.changeHandler.bind(this)} />
+          <input name="email" type="email" placeholder="Email" onChange={this.changeHandler.bind(this)} />
+          <input name="dateOfBirth" type="date" placeholder="Date of birth" onChange={this.changeHandler.bind(this)} />
+          <button type="submit">Submit</button>
+        </form>
       </div>
-    )
+    );
   }
 }
 
-export default GeneralInfo;
+GeneralInfo.propTypes = {
+  handleSection: propTypes.func.isRequired,
+  handleInfo: propTypes.func.isRequired,
+};
