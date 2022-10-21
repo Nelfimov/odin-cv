@@ -1,11 +1,12 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 
 export default class Education extends React.Component {
   constructor(props) {
     super(props);
 
-    const { section } = this.props;
+    const { section, finished } = this.props;
 
     this.state = {
       schoolName: '',
@@ -37,7 +38,7 @@ export default class Education extends React.Component {
         schoolTitle,
         schoolDate,
       }),
-    }, () => { console.log(this.state); });
+    });
   }
 
   submitHandler(e) {
@@ -75,12 +76,18 @@ export default class Education extends React.Component {
       <div id="education">
         <h2>Education</h2>
         <ul>
-          {schools.map((school) => (
+          {schools.length > 0 && schools.map((school, index) => (
             <li
-              key={school.schoolName}
-              id={school.schoolName}
+              key={school.schoolDate}
             >
+              {index}
+              :
+              {' '}
               {school.schoolName}
+              , graduated
+              {' '}
+              {school.schoolTitle}
+              <button type="button">Edit</button>
             </li>
           ))}
         </ul>
@@ -98,7 +105,8 @@ export default class Education extends React.Component {
 }
 
 Education.propTypes = {
-  section: PropTypes.string.isRequired,
-  handleSection: PropTypes.func.isRequired,
-  handleInfo: PropTypes.func.isRequired,
+  section: propTypes.string.isRequired,
+  handleSection: propTypes.func.isRequired,
+  handleInfo: propTypes.func.isRequired,
+  finished: propTypes.bool.isRequired,
 };

@@ -1,16 +1,19 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import propTypes from 'prop-types';
 
-export default class GeneralInfo extends React.Component {
+export default class General extends React.Component {
   constructor(props) {
     super(props);
+
+    const { section, finished } = this.props;
 
     this.state = {
       name: '',
       email: '',
       dateOfBirth: '',
       generals: [],
-      section: 'general',
+      section,
     };
   }
 
@@ -41,7 +44,7 @@ export default class GeneralInfo extends React.Component {
       const { handleSection, handleInfo } = this.props;
       const { section, generals } = this.state;
 
-      handleInfo('generalInfo', generals);
+      handleInfo('general', generals);
       handleSection(section);
     });
   }
@@ -61,7 +64,9 @@ export default class GeneralInfo extends React.Component {
   }
 }
 
-GeneralInfo.propTypes = {
+General.propTypes = {
   handleSection: propTypes.func.isRequired,
   handleInfo: propTypes.func.isRequired,
+  section: propTypes.string.isRequired,
+  finished: propTypes.bool.isRequired,
 };

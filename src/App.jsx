@@ -1,6 +1,6 @@
 import './styles/App.css';
 import React from 'react';
-import GeneralInfo from './components/GeneralInfo';
+import General from './components/General';
 import Education from './components/Education';
 import Experience from './components/Experience';
 
@@ -10,7 +10,7 @@ export default class App extends React.Component {
 
     this.state = {
       section: 'general',
-      generalInfo: [],
+      general: [],
       education: [],
       experience: [],
     };
@@ -37,10 +37,11 @@ export default class App extends React.Component {
 
     switch (section) {
       case 'general': return (
-        <GeneralInfo
+        <General
           handleSection={this.handleSection}
           handleInfo={this.handleInfo}
           section={section}
+          finished={false}
         />
       );
       case 'education': return (
@@ -48,6 +49,7 @@ export default class App extends React.Component {
           handleSection={this.handleSection}
           handleInfo={this.handleInfo}
           section={section}
+          finished={false}
         />
       );
       case 'experience': return (
@@ -55,13 +57,20 @@ export default class App extends React.Component {
           handleSection={this.handleSection}
           handleInfo={this.handleInfo}
           section={section}
+          finished={false}
         />
       );
       default: return (
         <>
-          <generalInfo />
-          <Education />
-          <Experience />
+          <General
+            finished
+          />
+          <Education
+            finished
+          />
+          <Experience
+            finished
+          />
         </>
       );
     }

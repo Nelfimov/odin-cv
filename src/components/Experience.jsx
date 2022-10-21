@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import propTypes from 'prop-types';
 
@@ -5,7 +6,7 @@ export default class Experience extends React.Component {
   constructor(props) {
     super(props);
 
-    const { section } = this.props;
+    const { section, finished } = this.props;
 
     this.state = {
       companyName: '',
@@ -69,12 +70,27 @@ export default class Experience extends React.Component {
 
   render() {
     const {
-      companyName, position, tasks, fromDate, untilDate,
+      companyName, position, tasks, fromDate, untilDate, experiences,
     } = this.state;
 
     return (
       <div id="experience">
         <h2>Practical experience</h2>
+        <ul>
+          {experiences.length > 0 && experiences.map((experience, index) => (
+            <li key={experience.fromDate}>
+              {index}
+              :
+              {' '}
+              {experience.companyName}
+              {' '}
+              as
+              {' '}
+              {experience.position}
+              <button type="button">Edit</button>
+            </li>
+          ))}
+        </ul>
         <form onSubmit={this.submitHandler.bind(this)}>
           <input value={companyName} onChange={this.changeHandler.bind(this)} name="companyName" id="company-name" type="text" placeholder="Company name" />
           <input value={position} onChange={this.changeHandler.bind(this)} name="position" id="position" type="text" placeholder="Position" />
@@ -94,4 +110,5 @@ Experience.propTypes = {
   section: propTypes.string.isRequired,
   handleSection: propTypes.func.isRequired,
   handleInfo: propTypes.func.isRequired,
+  finished: propTypes.bool.isRequired,
 };
