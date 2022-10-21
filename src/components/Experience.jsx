@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import propTypes from 'prop-types';
 
@@ -6,7 +5,7 @@ export default class Experience extends React.Component {
   constructor(props) {
     super(props);
 
-    const { section, finished } = this.props;
+    const { section, experiences } = this.props;
 
     this.state = {
       companyName: '',
@@ -14,9 +13,14 @@ export default class Experience extends React.Component {
       tasks: '',
       fromDate: '',
       untilDate: '',
-      experiences: [],
+      experiences,
       section,
     };
+  }
+
+  getBack() {
+    const { handleSection } = this.props;
+    handleSection('general');
   }
 
   changeHandler(e) {
@@ -39,7 +43,7 @@ export default class Experience extends React.Component {
       experiences: experiences.concat({
         companyName, position, tasks, fromDate, untilDate,
       }),
-    }, () => { console.log(this.state); });
+    });
   }
 
   submitHandler(e) {
@@ -59,7 +63,6 @@ export default class Experience extends React.Component {
       }),
       section: 'overall',
     }), () => {
-      console.log(this.state);
       const { handleSection, handleInfo } = this.props;
       const { section, experiences } = this.state;
 
@@ -73,34 +76,73 @@ export default class Experience extends React.Component {
       companyName, position, tasks, fromDate, untilDate, experiences,
     } = this.state;
 
+    const { finished } = this.props;
+
+    let content;
+    if (!finished) {
+      content = (
+        <>
+          <ul>
+            {experiences.length > 0 && experiences.map((experience, index) => (
+              <li key={experience.fromDate}>
+                {index}
+                :
+                {' '}
+                {experience.companyName}
+                {' '}
+                as
+                {' '}
+                {experience.position}
+                <button type="button">Edit</button>
+              </li>
+            ))}
+          </ul>
+          <form onSubmit={this.submitHandler.bind(this)}>
+            <input value={companyName} onChange={this.changeHandler.bind(this)} name="companyName" id="company-name" type="text" placeholder="Company name" />
+            <input value={position} onChange={this.changeHandler.bind(this)} name="position" id="position" type="text" placeholder="Position" />
+            <input value={tasks} onChange={this.changeHandler.bind(this)} name="tasks" id="tasks" type="text" placeholder="Your main tasks" />
+            <input value={fromDate} onChange={this.changeHandler.bind(this)} name="fromDate" id="from-date" type="date" placeholder="Company name" />
+            <input value={untilDate} onChange={this.changeHandler.bind(this)} name="untilDate" id="until-date" type="date" placeholder="Company name" />
+            <button type="button" data="add" onClick={this.addAnotherExperience.bind(this)}>Add another</button>
+            <button type="submit" data="submit">Submit</button>
+            <button type="button" data="back" onClick={this.getBack.bind(this)}>Back</button>
+          </form>
+        </>
+      );
+    } else {
+      content = (
+        <>
+          <table>
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Position</th>
+                <th>Performed tasks</th>
+                <th>From, date</th>
+                <th>Until, date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {experiences.map((experience) => (
+                <tr key={`${experience.companyName}_${experience.position}`}>
+                  <td>{experience.companyName}</td>
+                  <td>{experience.position}</td>
+                  <td>{experience.tasks}</td>
+                  <td>{new Date(experience.fromDate).toLocaleDateString()}</td>
+                  <td>{new Date(experience.untilDate).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button type="button">Edit</button>
+        </>
+      );
+    }
+
     return (
       <div id="experience">
         <h2>Practical experience</h2>
-        <ul>
-          {experiences.length > 0 && experiences.map((experience, index) => (
-            <li key={experience.fromDate}>
-              {index}
-              :
-              {' '}
-              {experience.companyName}
-              {' '}
-              as
-              {' '}
-              {experience.position}
-              <button type="button">Edit</button>
-            </li>
-          ))}
-        </ul>
-        <form onSubmit={this.submitHandler.bind(this)}>
-          <input value={companyName} onChange={this.changeHandler.bind(this)} name="companyName" id="company-name" type="text" placeholder="Company name" />
-          <input value={position} onChange={this.changeHandler.bind(this)} name="position" id="position" type="text" placeholder="Position" />
-          <input value={tasks} onChange={this.changeHandler.bind(this)} name="tasks" id="tasks" type="text" placeholder="Your main tasks" />
-          <input value={fromDate} onChange={this.changeHandler.bind(this)} name="fromDate" id="from-date" type="date" placeholder="Company name" />
-          <input value={untilDate} onChange={this.changeHandler.bind(this)} name="untilDate" id="until-date" type="date" placeholder="Company name" />
-          <button type="button" data="add" onClick={this.addAnotherExperience.bind(this)}>Add another</button>
-          <button type="submit" data="submit">Submit</button>
-          <button type="button" data="back">Back</button>
-        </form>
+        {content}
       </div>
     );
   }
@@ -111,4 +153,9 @@ Experience.propTypes = {
   handleSection: propTypes.func.isRequired,
   handleInfo: propTypes.func.isRequired,
   finished: propTypes.bool.isRequired,
+  experiences: propTypes.arrayOf(propTypes.shape),
+};
+
+Experience.defaultProps = {
+  experiences: [],
 };

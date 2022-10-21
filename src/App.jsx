@@ -27,13 +27,14 @@ export default class App extends React.Component {
       (prevState) => ({ [key]: prevState[key].concat(value) }),
       () => {
         console.log(this.state);
-        console.log(key, value);
       },
     );
   };
 
   render() {
-    const { section } = this.state;
+    const {
+      section, general, education, experience,
+    } = this.state;
 
     switch (section) {
       case 'general': return (
@@ -42,6 +43,7 @@ export default class App extends React.Component {
           handleInfo={this.handleInfo}
           section={section}
           finished={false}
+          generals={general}
         />
       );
       case 'education': return (
@@ -62,14 +64,27 @@ export default class App extends React.Component {
       );
       default: return (
         <>
+          <h1>Please confirm your data</h1>
           <General
+            handleSection={this.handleSection}
+            handleInfo={this.handleInfo}
+            section={section}
             finished
+            generals={general}
           />
           <Education
+            handleSection={this.handleSection}
+            handleInfo={this.handleInfo}
+            section={section}
             finished
+            educations={education}
           />
           <Experience
+            handleSection={this.handleSection}
+            handleInfo={this.handleInfo}
+            section={section}
             finished
+            experiences={experience}
           />
         </>
       );
