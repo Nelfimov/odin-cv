@@ -20,7 +20,7 @@ export default class Experience extends React.Component {
 
   getBack() {
     const { handleSection } = this.props;
-    handleSection('general');
+    handleSection('education');
   }
 
   changeHandler(e) {

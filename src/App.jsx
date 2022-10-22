@@ -10,7 +10,7 @@ export default class App extends React.Component {
 
     this.state = {
       section: 'general',
-      general: [],
+      general: {},
       education: [],
       experience: [],
     };
@@ -24,7 +24,10 @@ export default class App extends React.Component {
 
   handleInfo = (key, value) => {
     this.setState(
-      (prevState) => ({ [key]: prevState[key].concat(value) }),
+      (prevState) => {
+        if (key !== 'general') return { [key]: prevState[key].concat(value) };
+        return { [key]: value };
+      },
       () => {
         console.log(this.state);
       },

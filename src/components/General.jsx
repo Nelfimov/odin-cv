@@ -58,9 +58,9 @@ export default class General extends React.Component {
     if (!finished) {
       content = (
         <form onSubmit={this.submitHandler.bind(this)}>
-          <input value={name} name="name" type="text" placeholder="Full name" onChange={this.changeHandler.bind(this)} />
-          <input value={email} name="email" type="email" placeholder="Email" onChange={this.changeHandler.bind(this)} />
-          <input value={dateOfBirth} name="dateOfBirth" type="date" placeholder="Date of birth" onChange={this.changeHandler.bind(this)} />
+          <input value={name || ''} name="name" type="text" placeholder="Full name" onChange={this.changeHandler.bind(this)} />
+          <input value={email || ''} name="email" type="email" placeholder="Email" onChange={this.changeHandler.bind(this)} />
+          <input value={dateOfBirth || ''} name="dateOfBirth" type="date" placeholder="Date of birth" onChange={this.changeHandler.bind(this)} />
           <button type="submit">Save</button>
         </form>
       );
@@ -102,7 +102,7 @@ General.propTypes = {
   handleInfo: propTypes.func.isRequired,
   section: propTypes.string.isRequired,
   finished: propTypes.bool.isRequired,
-  generals: propTypes.arrayOf(propTypes.shape),
+  generals: propTypes.shape(),
 };
 
 General.defaultProps = {
