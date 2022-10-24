@@ -24,9 +24,8 @@ export default class App extends React.Component {
 
   handleInfo = (key, value) => {
     this.setState(
-      (prevState) => {
-        if (key !== 'general') return { [key]: prevState[key].concat(value) };
-        return { [key]: value };
+      {
+        [key]: value,
       },
       () => {
         console.log(this.state);
@@ -54,6 +53,7 @@ export default class App extends React.Component {
           handleSection={this.handleSection}
           handleInfo={this.handleInfo}
           section={section}
+          education={education}
           finished={false}
         />
       );
@@ -62,6 +62,7 @@ export default class App extends React.Component {
           handleSection={this.handleSection}
           handleInfo={this.handleInfo}
           section={section}
+          experiences={experience}
           finished={false}
         />
       );
@@ -80,7 +81,7 @@ export default class App extends React.Component {
             handleInfo={this.handleInfo}
             section={section}
             finished
-            educations={education}
+            education={education}
           />
           <Experience
             handleSection={this.handleSection}

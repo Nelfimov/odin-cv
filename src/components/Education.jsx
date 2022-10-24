@@ -1,17 +1,19 @@
 import React from 'react';
 import propTypes from 'prop-types';
+import uniqid from 'uniqid';
 
 export default class Education extends React.Component {
   constructor(props) {
     super(props);
 
-    const { section, educations } = this.props;
+    const { section, education } = this.props;
 
     this.state = {
       schoolName: '',
       schoolTitle: '',
       schoolDate: '',
-      schools: educations,
+      id: uniqid(),
+      schools: education,
       section,
     };
   }
@@ -27,21 +29,40 @@ export default class Education extends React.Component {
     });
   }
 
+  /** Change existing schools in [school] by onChange */
+  changeExistingHandler(e) {
+    this.setState((prevState) => ({
+      schools: prevState.schools.map(
+        (school) => (school.id === e.target.parentElement.id
+          ? { ...school, [e.target.name]: e.target.value }
+          : school),
+      ),
+    }));
+  }
+
+  /** Add existing school to state and add new inputs */
   addAnotherSchool() {
     const {
-      schools, schoolName, schoolTitle, schoolDate, section,
+      schools, schoolName, schoolTitle, schoolDate, section, id,
     } = this.state;
 
+    if (!schoolDate || !schoolName || !schoolTitle) {
+      alert('Fill in all required fields');
+      return;
+    }
+
     this.setState({
-      section,
-      schoolName: '',
-      schoolTitle: '',
-      schoolDate: '',
       schools: schools.concat({
         schoolName,
         schoolTitle,
         schoolDate,
+        id,
       }),
+      section,
+      schoolName: '',
+      schoolTitle: '',
+      schoolDate: '',
+      id: uniqid(),
     });
   }
 
@@ -49,38 +70,45 @@ export default class Education extends React.Component {
     e.preventDefault();
 
     const {
-      schoolName, schoolTitle, schoolDate,
+      schoolName, schoolTitle, schoolDate, id,
     } = this.state;
 
     /** If inputs are empty, check for anything in SCHOOLS. Else, ignore Submit. */
     if (!schoolDate || !schoolName || !schoolTitle) {
       // eslint-disable-next-line react/destructuring-assignment
       if (this.state.schools.length < 1) {
-        console.log('You have to input something');
+        alert('You have to input something');
         return;
       }
 
       this.setState({
         section: 'experience',
+      }, () => {
+        const { handleSection, handleInfo } = this.props;
+        const { section } = this.state;
+        const { schools } = this.state;
+
+        handleSection(section);
+        handleInfo('education', schools);
       });
-      return;
+    } else {
+      this.setState((prevState) => ({
+        schools: prevState.schools.concat({
+          schoolName,
+          schoolTitle,
+          schoolDate,
+          id,
+        }),
+        section: 'experience',
+      }), () => {
+        const { handleSection, handleInfo } = this.props;
+        const { section } = this.state;
+        const { schools } = this.state;
+
+        handleSection(section);
+        handleInfo('education', schools);
+      });
     }
-
-    this.setState((prevState) => ({
-      schools: prevState.schools.concat({
-        schoolName,
-        schoolTitle,
-        schoolDate,
-      }),
-      section: 'experience',
-    }), () => {
-      const { handleSection, handleInfo } = this.props;
-      const { section } = this.state;
-      const { schools } = this.state;
-
-      handleSection(section);
-      handleInfo('education', schools);
-    });
   }
 
   render() {
@@ -97,11 +125,12 @@ export default class Education extends React.Component {
           { schools.length > 0
               && (
               <ul>
+                <h2>Your education</h2>
                 {schools.map((school) => (
-                  <li key={`${school.schoolDate}_${school.schoolName}`}>
-                    <input type="text" name="schoolName" value={school.schoolName} placeholder="School name" onChange={this.changeHandler.bind(this)} />
-                    <input type="text" name="schoolTitle" value={school.schoolTitle} placeholder="Title" onChange={this.changeHandler.bind(this)} />
-                    <input type="date" name="schoolDate" value={school.schoolDate} placeholder="Date" onChange={this.changeHandler.bind(this)} />
+                  <li key={school.id} id={school.id}>
+                    <input type="text" name="schoolName" value={school.schoolName} placeholder="School name" onChange={this.changeExistingHandler.bind(this)} />
+                    <input type="text" name="schoolTitle" value={school.schoolTitle} placeholder="Title" onChange={this.changeExistingHandler.bind(this)} />
+                    <input type="date" name="schoolDate" value={school.schoolDate} placeholder="Date" onChange={this.changeExistingHandler.bind(this)} />
                   </li>
                 ))}
               </ul>
@@ -156,9 +185,9 @@ Education.propTypes = {
   handleSection: propTypes.func.isRequired,
   handleInfo: propTypes.func.isRequired,
   finished: propTypes.bool.isRequired,
-  educations: propTypes.arrayOf(propTypes.shape),
+  education: propTypes.arrayOf(propTypes.shape),
 };
 
 Education.defaultProps = {
-  educations: [],
+  education: [],
 };
