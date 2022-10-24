@@ -76,7 +76,7 @@ export default class Experience extends React.Component {
       companyName, position, tasks, fromDate, untilDate, experiences,
     } = this.state;
 
-    const { finished } = this.props;
+    const { finished, handleSection } = this.props;
 
     let content;
     if (!finished) {
@@ -134,7 +134,7 @@ export default class Experience extends React.Component {
               ))}
             </tbody>
           </table>
-          <button type="button">Edit</button>
+          <button type="button" onClick={() => handleSection('experience')}>Edit</button>
         </>
       );
     }

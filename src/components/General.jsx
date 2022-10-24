@@ -49,7 +49,7 @@ export default class General extends React.Component {
   }
 
   render() {
-    const { finished } = this.props;
+    const { finished, handleSection } = this.props;
     const {
       generals, name, dateOfBirth, email,
     } = this.state;
@@ -58,9 +58,9 @@ export default class General extends React.Component {
     if (!finished) {
       content = (
         <form onSubmit={this.submitHandler.bind(this)}>
-          <input value={name || ''} name="name" type="text" placeholder="Full name" onChange={this.changeHandler.bind(this)} />
-          <input value={email || ''} name="email" type="email" placeholder="Email" onChange={this.changeHandler.bind(this)} />
-          <input value={dateOfBirth || ''} name="dateOfBirth" type="date" placeholder="Date of birth" onChange={this.changeHandler.bind(this)} />
+          <input required value={name || ''} name="name" type="text" placeholder="Full name" onChange={this.changeHandler.bind(this)} />
+          <input required value={email || ''} name="email" type="email" placeholder="Email" onChange={this.changeHandler.bind(this)} />
+          <input required value={dateOfBirth || ''} name="dateOfBirth" type="date" placeholder="Date of birth" onChange={this.changeHandler.bind(this)} />
           <button type="submit">Save</button>
         </form>
       );
@@ -71,19 +71,19 @@ export default class General extends React.Component {
             <tbody>
               <tr>
                 <td>Name: </td>
-                <td>{generals[0].name}</td>
+                <td>{generals.name}</td>
               </tr>
               <tr>
                 <td>Email: </td>
-                <td>{generals[0].email}</td>
+                <td>{generals.email}</td>
               </tr>
               <tr>
                 <td>Date of birth: </td>
-                <td>{new Date(generals[0].dateOfBirth).toLocaleDateString()}</td>
+                <td>{new Date(generals.dateOfBirth).toLocaleDateString()}</td>
               </tr>
             </tbody>
           </table>
-          <button type="button">Edit</button>
+          <button type="button" onClick={() => handleSection('general')}>Edit</button>
         </>
       );
     }

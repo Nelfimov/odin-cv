@@ -52,10 +52,21 @@ export default class Education extends React.Component {
       schoolName, schoolTitle, schoolDate,
     } = this.state;
 
+    /** If inputs are empty, check for anything in SCHOOLS. Else, ignore Submit. */
+    if (!schoolDate || !schoolName || !schoolTitle) {
+      // eslint-disable-next-line react/destructuring-assignment
+      if (this.state.schools.length < 1) {
+        console.log('You have to input something');
+        return;
+      }
+
+      this.setState({
+        section: 'experience',
+      });
+      return;
+    }
+
     this.setState((prevState) => ({
-      schoolName,
-      schoolTitle,
-      schoolDate,
       schools: prevState.schools.concat({
         schoolName,
         schoolTitle,
@@ -64,7 +75,8 @@ export default class Education extends React.Component {
       section: 'experience',
     }), () => {
       const { handleSection, handleInfo } = this.props;
-      const { section, schools } = this.state;
+      const { section } = this.state;
+      const { schools } = this.state;
 
       handleSection(section);
       handleInfo('education', schools);
@@ -76,37 +88,33 @@ export default class Education extends React.Component {
       schools, schoolName, schoolDate, schoolTitle,
     } = this.state;
 
-    const { finished } = this.props;
+    const { finished, handleSection } = this.props;
 
     let content;
     if (!finished) {
       content = (
-        <>
-          <ul>
-            {schools.length > 0 && schools.map((school, index) => (
-              <li
-                key={school.schoolDate}
-              >
-                {index}
-                :
-                {' '}
-                {school.schoolName}
-                , graduated
-                {' '}
-                {school.schoolTitle}
-                <button type="button">Edit</button>
-              </li>
-            ))}
-          </ul>
-          <form onSubmit={this.submitHandler.bind(this)}>
-            <input type="text" name="schoolName" value={schoolName} id="school-name" placeholder="School name" onChange={this.changeHandler.bind(this)} />
-            <input type="text" name="schoolTitle" value={schoolTitle} id="school-title" placeholder="Title" onChange={this.changeHandler.bind(this)} />
-            <input type="date" name="schoolDate" value={schoolDate} id="school-date" placeholder="Date" onChange={this.changeHandler.bind(this)} />
-            <button type="button" data="add" onClick={this.addAnotherSchool.bind(this)}>Add another</button>
-            <button type="submit" data="submit">Submit</button>
-            <button type="button" data="back" onClick={this.getBack.bind(this)}>Back</button>
-          </form>
-        </>
+        <form onSubmit={this.submitHandler.bind(this)}>
+          { schools.length > 0
+              && (
+              <ul>
+                {schools.map((school) => (
+                  <li key={`${school.schoolDate}_${school.schoolName}`}>
+                    <input type="text" name="schoolName" value={school.schoolName} placeholder="School name" onChange={this.changeHandler.bind(this)} />
+                    <input type="text" name="schoolTitle" value={school.schoolTitle} placeholder="Title" onChange={this.changeHandler.bind(this)} />
+                    <input type="date" name="schoolDate" value={school.schoolDate} placeholder="Date" onChange={this.changeHandler.bind(this)} />
+                  </li>
+                ))}
+              </ul>
+              )}
+
+          <input type="text" name="schoolName" value={schoolName || ''} id="school-name" placeholder="School name" onChange={this.changeHandler.bind(this)} />
+          <input type="text" name="schoolTitle" value={schoolTitle || ''} id="school-title" placeholder="Title" onChange={this.changeHandler.bind(this)} />
+          <input type="date" name="schoolDate" value={schoolDate || ''} id="school-date" placeholder="Date" onChange={this.changeHandler.bind(this)} />
+
+          <button type="button" data="add" onClick={this.addAnotherSchool.bind(this)}>Add another</button>
+          <button type="submit" data="submit">Submit</button>
+          <button type="button" data="back" onClick={this.getBack.bind(this)}>Back</button>
+        </form>
       );
     } else {
       content = (
@@ -129,7 +137,7 @@ export default class Education extends React.Component {
               ))}
             </tbody>
           </table>
-          <button type="button">Edit</button>
+          <button type="button" onClick={() => handleSection('education')}>Edit</button>
         </>
       );
     }
