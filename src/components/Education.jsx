@@ -128,17 +128,68 @@ export default class Education extends React.Component {
                 <h2>Your education</h2>
                 {schools.map((school) => (
                   <li key={school.id} id={school.id}>
-                    <input type="text" name="schoolName" value={school.schoolName} placeholder="School name" onChange={this.changeExistingHandler.bind(this)} />
-                    <input type="text" name="schoolTitle" value={school.schoolTitle} placeholder="Title" onChange={this.changeExistingHandler.bind(this)} />
-                    <input type="date" name="schoolDate" value={school.schoolDate} placeholder="Date" onChange={this.changeExistingHandler.bind(this)} />
+                    <input
+                      type="text"
+                      name="schoolName"
+                      value={school.schoolName}
+                      placeholder="School name"
+                      onChange={this.changeExistingHandler.bind(this)}
+                    />
+                    <input
+                      type="text"
+                      name="schoolTitle"
+                      value={school.schoolTitle}
+                      placeholder="Title"
+                      onChange={this.changeExistingHandler.bind(this)}
+                    />
+                    <input
+                      type="text"
+                      onFocus={(e) => {
+                        e.target.type = 'date';
+                      }}
+                      onBlur={(e) => {
+                        e.target.type = 'text';
+                      }}
+                      name="schoolDate"
+                      value={school.schoolDate}
+                      placeholder="Date"
+                      onChange={this.changeExistingHandler.bind(this)}
+                    />
                   </li>
                 ))}
               </ul>
               )}
 
-          <input type="text" name="schoolName" value={schoolName || ''} id="school-name" placeholder="School name" onChange={this.changeHandler.bind(this)} />
-          <input type="text" name="schoolTitle" value={schoolTitle || ''} id="school-title" placeholder="Title" onChange={this.changeHandler.bind(this)} />
-          <input type="date" name="schoolDate" value={schoolDate || ''} id="school-date" placeholder="Date" onChange={this.changeHandler.bind(this)} />
+          <input
+            type="text"
+            name="schoolName"
+            value={schoolName || ''}
+            id="school-name"
+            placeholder="School name"
+            onChange={this.changeHandler.bind(this)}
+          />
+          <input
+            type="text"
+            name="schoolTitle"
+            value={schoolTitle || ''}
+            id="school-title"
+            placeholder="Title"
+            onChange={this.changeHandler.bind(this)}
+          />
+          <input
+            type="text"
+            onFocus={(e) => {
+              e.target.type = 'date';
+            }}
+            onBlur={(e) => {
+              e.target.type = 'text';
+            }}
+            name="schoolDate"
+            value={schoolDate || ''}
+            id="school-date"
+            placeholder="Date"
+            onChange={this.changeHandler.bind(this)}
+          />
 
           <button type="button" data="add" onClick={this.addAnotherSchool.bind(this)}>Add another</button>
           <button type="submit" data="submit">Submit</button>

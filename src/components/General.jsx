@@ -60,7 +60,20 @@ export default class General extends React.Component {
         <form onSubmit={this.submitHandler.bind(this)}>
           <input required value={name || ''} name="name" type="text" placeholder="Full name" onChange={this.changeHandler.bind(this)} />
           <input required value={email || ''} name="email" type="email" placeholder="Email" onChange={this.changeHandler.bind(this)} />
-          <input required value={dateOfBirth || ''} name="dateOfBirth" type="date" placeholder="Date of birth" onChange={this.changeHandler.bind(this)} />
+          <input
+            required
+            value={dateOfBirth || ''}
+            name="dateOfBirth"
+            type="text"
+            onFocus={(e) => {
+              e.target.type = 'date';
+            }}
+            onBlur={(e) => {
+              e.target.type = 'text';
+            }}
+            placeholder="Date of birth"
+            onChange={this.changeHandler.bind(this)}
+          />
           <button type="submit">Save</button>
         </form>
       );

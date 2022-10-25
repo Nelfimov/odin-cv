@@ -1,4 +1,3 @@
-import './styles/App.css';
 import React from 'react';
 import General from './components/General';
 import Education from './components/Education';
@@ -17,27 +16,14 @@ export default class App extends React.Component {
   }
 
   handleSection = (string) => {
-    this.setState({
-      section: string,
-    });
+    this.setState({ section: string });
   };
 
   handleInfo = (key, value) => {
-    this.setState(
-      {
-        [key]: value,
-      },
-      () => {
-        console.log(this.state);
-      },
-    );
+    this.setState({ [key]: value });
   };
 
-  render() {
-    const {
-      section, general, education, experience,
-    } = this.state;
-
+  flowApp = (section, general, education, experience) => {
     switch (section) {
       case 'general': return (
         <General
@@ -93,5 +79,14 @@ export default class App extends React.Component {
         </>
       );
     }
+  };
+
+  render() {
+    const {
+      section, general, education, experience,
+    } = this.state;
+
+    return (this.flowApp(section, general, education, experience)
+    );
   }
 }

@@ -124,20 +124,109 @@ export default class Experience extends React.Component {
             <h2>Your experience</h2>
             {experiences.map((experience) => (
               <li key={experience.id} id={experience.id}>
-                <input value={experience.companyName} onChange={this.changeExistingHandler.bind(this)} name="companyName" type="text" placeholder="Company name" />
-                <input value={experience.position} onChange={this.changeExistingHandler.bind(this)} name="position" type="text" placeholder="Position" />
-                <input value={experience.tasks} onChange={this.changeExistingHandler.bind(this)} name="tasks" type="text" placeholder="Your main tasks" />
-                <input value={experience.fromDate} onChange={this.changeExistingHandler.bind(this)} name="fromDate" type="date" placeholder="Company name" />
-                <input value={experience.untilDate} onChange={this.changeExistingHandler.bind(this)} name="untilDate" type="date" placeholder="Company name" />
+                <input
+                  value={experience.companyName}
+                  onChange={this.changeExistingHandler.bind(this)}
+                  name="companyName"
+                  type="text"
+                  placeholder="Company name"
+                />
+                <input
+                  value={experience.position}
+                  onChange={this.changeExistingHandler.bind(this)}
+                  name="position"
+                  type="text"
+                  placeholder="Position"
+                />
+                <input
+                  value={experience.tasks}
+                  onChange={this.changeExistingHandler.bind(this)}
+                  name="tasks"
+                  type="text"
+                  placeholder="Your main tasks"
+                />
+                <input
+                  value={experience.fromDate}
+                  onChange={this.changeExistingHandler.bind(this)}
+                  name="fromDate"
+                  type="text"
+                  onFocus={(e) => {
+                    e.target.type = 'date';
+                  }}
+                  onBlur={(e) => {
+                    e.target.type = 'text';
+                  }}
+                  placeholder="Company name"
+                />
+                <input
+                  value={experience.untilDate}
+                  onChange={this.changeExistingHandler.bind(this)}
+                  name="untilDate"
+                  type="text"
+                  onFocus={(e) => {
+                    e.target.type = 'date';
+                  }}
+                  onBlur={(e) => {
+                    e.target.type = 'text';
+                  }}
+                  placeholder="Company name"
+                />
               </li>
             ))}
           </ul>
           )}
-          <input value={companyName} onChange={this.changeHandler.bind(this)} name="companyName" id="company-name" type="text" placeholder="Company name" />
-          <input value={position} onChange={this.changeHandler.bind(this)} name="position" id="position" type="text" placeholder="Position" />
-          <input value={tasks} onChange={this.changeHandler.bind(this)} name="tasks" id="tasks" type="text" placeholder="Your main tasks" />
-          <input value={fromDate} onChange={this.changeHandler.bind(this)} name="fromDate" id="from-date" type="date" placeholder="Company name" />
-          <input value={untilDate} onChange={this.changeHandler.bind(this)} name="untilDate" id="until-date" type="date" placeholder="Company name" />
+          <input
+            value={companyName}
+            onChange={this.changeHandler.bind(this)}
+            name="companyName"
+            id="company-name"
+            type="text"
+            placeholder="Company name"
+          />
+          <input
+            value={position}
+            onChange={this.changeHandler.bind(this)}
+            name="position"
+            id="position"
+            type="text"
+            placeholder="Position"
+          />
+          <input
+            value={tasks}
+            onChange={this.changeHandler.bind(this)}
+            name="tasks"
+            id="tasks"
+            type="text"
+            placeholder="Your main tasks"
+          />
+          <input
+            value={fromDate}
+            onChange={this.changeHandler.bind(this)}
+            name="fromDate"
+            id="from-date"
+            type="text"
+            onFocus={(e) => {
+              e.target.type = 'date';
+            }}
+            onBlur={(e) => {
+              e.target.type = 'text';
+            }}
+            placeholder="Start date"
+          />
+          <input
+            value={untilDate}
+            onChange={this.changeHandler.bind(this)}
+            name="untilDate"
+            id="until-date"
+            type="text"
+            onFocus={(e) => {
+              e.target.type = 'date';
+            }}
+            onBlur={(e) => {
+              e.target.type = 'text';
+            }}
+            placeholder="End date"
+          />
           <button type="button" data="add" onClick={this.addAnotherExperience.bind(this)}>Add another</button>
           <button type="submit" data="submit">Submit</button>
           <button type="button" data="back" onClick={this.getBack.bind(this)}>Back</button>
