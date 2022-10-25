@@ -1,0 +1,15 @@
+.notification-container {
+  font-size: 14px;
+  box-sizing: border-box;
+  position: fixed;
+  right: 16px;
+  top: 16px;
+  border-radius: 25px;
+}
+
+.notification {
+  border-radius: 25px;
+  margin-bottom: 10px;
+  background-color: white;
+  border: 1px solid black;
+}

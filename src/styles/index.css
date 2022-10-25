@@ -35,6 +35,7 @@ form {
 
 form {
   gap: 20px;
+  width: 100%;
 }
 
 input,

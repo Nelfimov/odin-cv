@@ -47,7 +47,6 @@ export default class Education extends React.Component {
     } = this.state;
 
     if (!schoolDate || !schoolName || !schoolTitle) {
-      alert('Fill in all required fields');
       return;
     }
 
@@ -209,7 +208,7 @@ export default class Education extends React.Component {
             </thead>
             <tbody>
               {schools.map((school) => (
-                <tr key={`${school.schoolName}_${school.schoolTitle}`}>
+                <tr key={school.id}>
                   <td>{school.schoolName}</td>
                   <td>{school.schoolTitle}</td>
                   <td>{new Date(school.schoolDate).toLocaleDateString()}</td>

@@ -2,6 +2,18 @@ import React from 'react';
 import General from './components/General';
 import Education from './components/Education';
 import Experience from './components/Experience';
+import Notification from './components/Notification';
+
+const testList = [
+  {
+    title: 'Success',
+    description: 'This is a success toast component',
+  },
+  {
+    title: 'Danger',
+    description: 'This is an error toast component',
+  },
+];
 
 export default class App extends React.Component {
   constructor() {
@@ -86,7 +98,11 @@ export default class App extends React.Component {
       section, general, education, experience,
     } = this.state;
 
-    return (this.flowApp(section, general, education, experience)
+    return (
+      <>
+        <Notification notificationList={testList} />
+        {this.flowApp(section, general, education, experience)}
+      </>
     );
   }
 }
