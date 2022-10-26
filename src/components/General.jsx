@@ -1,68 +1,72 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import propTypes from 'prop-types';
 
-export default class General extends React.Component {
-  constructor(props) {
-    super(props);
+/**
+ * General information component: name, email, date of birth
+ */
+function General(props) {
+  const {
+    section: propSection, generals: oldGenerals, finished, handleInfo, handleSection,
+  } = props;
 
-    const { section, generals } = this.props;
+  const [general, setGeneral] = useState({
+    name: '',
+    email: '',
+    dateOfBirth: '',
+  });
+  const [section, setSection] = useState(propSection);
+  const [generals, setGenerals] = useState(oldGenerals);
 
-    this.state = {
-      name: generals.name,
-      email: generals.email,
-      dateOfBirth: generals.dateOfBirth,
-      generals,
-      section,
-    };
-  }
-
-  changeHandler(e) {
-    this.setState({
+  const changeHandler = (e) => {
+    setGeneral({
+      ...general,
       [e.target.name]: e.target.value,
     });
-  }
+  };
 
-  submitHandler(e) {
+  useEffect(() => {
+    handleInfo('general', generals);
+    handleSection(section);
+  }, [generals]);
+
+  const submitHandler = (e) => {
     e.preventDefault();
 
-    const {
-      name, email, dateOfBirth,
-    } = this.state;
-
-    this.setState(() => ({
-      name,
-      email,
-      dateOfBirth,
-      generals: {
-        name,
-        email,
-        dateOfBirth,
-      },
-      section: 'education',
-    }), () => {
-      const { handleSection, handleInfo } = this.props;
-      const { section, generals } = this.state;
-
-      handleInfo('general', generals);
-      handleSection(section);
+    setGenerals(general);
+    setGeneral({
+      name: '',
+      email: '',
+      dateOfBirth: '',
     });
-  }
+    setSection('education');
+  };
 
-  render() {
-    const { finished, handleSection } = this.props;
-    const {
-      generals, name, dateOfBirth, email,
-    } = this.state;
-
-    let content;
+  /**
+   * Create content based on *finished* status
+   */
+  const createContent = () => {
     if (!finished) {
-      content = (
-        <form onSubmit={this.submitHandler.bind(this)}>
-          <input required value={name || ''} name="name" type="text" placeholder="Full name" onChange={this.changeHandler.bind(this)} />
-          <input required value={email || ''} name="email" type="email" placeholder="Email" onChange={this.changeHandler.bind(this)} />
+      return (
+        <form onSubmit={submitHandler}>
           <input
             required
-            value={dateOfBirth || ''}
+            value={general.name}
+            name="name"
+            type="text"
+            placeholder="Full name"
+            onChange={changeHandler}
+          />
+          <input
+            required
+            value={general.email}
+            name="email"
+            type="email"
+            placeholder="Email"
+            onChange={changeHandler}
+          />
+          <input
+            required
+            value={general.dateOfBirth}
             name="dateOfBirth"
             type="text"
             onFocus={(e) => {
@@ -72,42 +76,41 @@ export default class General extends React.Component {
               e.target.type = 'text';
             }}
             placeholder="Date of birth"
-            onChange={this.changeHandler.bind(this)}
+            onChange={changeHandler}
           />
           <button type="submit">Save</button>
         </form>
       );
-    } else {
-      content = (
-        <>
-          <table>
-            <tbody>
-              <tr>
-                <td>Name: </td>
-                <td>{generals.name}</td>
-              </tr>
-              <tr>
-                <td>Email: </td>
-                <td>{generals.email}</td>
-              </tr>
-              <tr>
-                <td>Date of birth: </td>
-                <td>{new Date(generals.dateOfBirth).toLocaleDateString()}</td>
-              </tr>
-            </tbody>
-          </table>
-          <button type="button" onClick={() => handleSection('general')}>Edit</button>
-        </>
-      );
     }
-
     return (
-      <div id="general-info">
-        <h2>General info</h2>
-        {content}
-      </div>
+      <>
+        <table>
+          <tbody>
+            <tr>
+              <td>Name: </td>
+              <td>{generals.name}</td>
+            </tr>
+            <tr>
+              <td>Email: </td>
+              <td>{generals.email}</td>
+            </tr>
+            <tr>
+              <td>Date of birth: </td>
+              <td>{new Date(generals.dateOfBirth).toLocaleDateString()}</td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="button" onClick={() => handleSection('general')}>Edit</button>
+      </>
     );
-  }
+  };
+
+  return (
+    <div id="general-info">
+      <h2>General info</h2>
+      {createContent()}
+    </div>
+  );
 }
 
 General.propTypes = {
@@ -121,3 +124,5 @@ General.propTypes = {
 General.defaultProps = {
   generals: [],
 };
+
+export default General;

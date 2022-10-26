@@ -32,7 +32,9 @@ export default class App extends React.Component {
   };
 
   handleInfo = (key, value) => {
-    this.setState({ [key]: value });
+    this.setState({ [key]: value }, () => {
+      console.log(this.state);
+    });
   };
 
   flowApp = (section, general, education, experience) => {
