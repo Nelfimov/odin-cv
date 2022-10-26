@@ -1,153 +1,125 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import propTypes from 'prop-types';
 import uniqid from 'uniqid';
 
-export default class Experience extends React.Component {
-  constructor(props) {
-    super(props);
+function Experience(props) {
+  const {
+    section: propSection, experiences: propExperiences, handleInfo, handleSection, finished,
+  } = props;
 
-    const { section, experiences } = this.props;
+  const [experience, setExperience] = useState({
+    companyName: '',
+    position: '',
+    tasks: '',
+    fromDate: '',
+    untilDate: '',
+    id: uniqid(),
+  });
+  const [experiences, setExperiences] = useState(propExperiences);
+  const [section, setSection] = useState(propSection);
 
-    this.state = {
-      companyName: '',
-      position: '',
-      tasks: '',
-      fromDate: '',
-      untilDate: '',
-      id: uniqid(),
-      experiences,
-      section,
-    };
-  }
+  useEffect(() => {
+    handleInfo('experience', experiences);
+    handleSection(section);
+  }, [section]);
 
-  getBack() {
-    const { handleSection } = this.props;
-    handleSection('education');
-  }
+  const getBack = () => handleSection('general');
 
-  changeHandler(e) {
-    this.setState({
+  const changeHandler = (e) => {
+    setExperience({
+      ...experience,
       [e.target.name]: e.target.value,
     });
-  }
+  };
 
-  changeExistingHandler(e) {
-    this.setState((prevState) => ({
-      experiences: prevState.experiences.map(
-        (experience) => (experience.id === e.target.parentElement.id
-          ? { ...experience, [e.target.name]: e.target.value }
-          : experience),
-      ),
-    }));
-  }
+  const changeExistingHandler = (e) => {
+    const { id } = e.target.parentElement;
+    setExperiences((prevState) => {
+      const newState = prevState.map((item) => (
+        item.id === id
+          ? { ...item, [e.target.name]: e.target.value }
+          : item));
+      return newState;
+    });
+  };
 
-  addAnotherExperience() {
+  const addAnotherExperience = () => {
     const {
-      companyName, position, tasks, fromDate, untilDate, experiences, id,
-    } = this.state;
+      companyName, position, tasks, fromDate, untilDate,
+    } = experience;
 
-    if (!companyName || !position || !tasks || !fromDate || !untilDate) {
-      alert('You have to input something');
-      return;
+    if (companyName && position && tasks && fromDate && untilDate) {
+      setExperiences((prevState) => prevState.concat(experience));
+      setExperience({
+        companyName: '',
+        position: '',
+        tasks: '',
+        fromDate: '',
+        untilDate: '',
+        id: uniqid(),
+      });
     }
+  };
 
-    this.setState({
+  const submitHandler = (e) => {
+    e.preventDefault();
+
+    setExperiences((prevState) => {
+      const {
+        companyName, position, tasks, fromDate, untilDate,
+      } = experience;
+      if (companyName && position && tasks && fromDate && untilDate) {
+        return (prevState.concat(experience));
+      }
+      return prevState;
+    });
+    setExperience({
       companyName: '',
       position: '',
       tasks: '',
       fromDate: '',
       untilDate: '',
       id: uniqid(),
-      experiences: experiences.concat({
-        companyName, position, tasks, fromDate, untilDate, id,
-      }),
     });
-  }
+    setSection((prevState) => {
+      if (experiences.length > 0) return 'overall';
+      return prevState;
+    });
+  };
 
-  submitHandler(e) {
-    e.preventDefault();
-
-    const {
-      companyName, position, tasks, fromDate, untilDate, id,
-    } = this.state;
-
-    if (!companyName || !position || !tasks || !fromDate || !untilDate) {
-      // eslint-disable-next-line react/destructuring-assignment
-      if (this.state.experiences.length < 1) {
-        alert('You have to input something');
-        return;
-      }
-
-      this.setState({
-        section: 'overall',
-      }, () => {
-        const { handleSection, handleInfo } = this.props;
-        const { section, experiences } = this.state;
-
-        handleSection(section);
-        handleInfo('experience', experiences);
-      });
-    } else {
-      this.setState((prevState) => ({
-        experiences: prevState.experiences.concat({
-          companyName,
-          position,
-          tasks,
-          fromDate,
-          untilDate,
-          id,
-        }),
-        section: 'overall',
-      }), () => {
-        const { handleSection, handleInfo } = this.props;
-        const { section, experiences } = this.state;
-
-        handleSection(section);
-        handleInfo('experience', experiences);
-      });
-    }
-  }
-
-  render() {
-    const {
-      companyName, position, tasks, fromDate, untilDate, experiences,
-    } = this.state;
-
-    const { finished, handleSection } = this.props;
-
-    let content;
+  const createContent = () => {
     if (!finished) {
-      content = (
-        <form onSubmit={this.submitHandler.bind(this)}>
+      return (
+        <form onSubmit={submitHandler}>
           { experiences.length > 0 && (
           <ul>
             <h2>Your experience</h2>
-            {experiences.map((experience) => (
-              <li key={experience.id} id={experience.id}>
+            {experiences.map((item) => (
+              <li key={item.id} id={item.id}>
                 <input
-                  value={experience.companyName}
-                  onChange={this.changeExistingHandler.bind(this)}
+                  value={item.companyName}
+                  onChange={changeExistingHandler}
                   name="companyName"
                   type="text"
                   placeholder="Company name"
                 />
                 <input
-                  value={experience.position}
-                  onChange={this.changeExistingHandler.bind(this)}
+                  value={item.position}
+                  onChange={changeExistingHandler}
                   name="position"
                   type="text"
                   placeholder="Position"
                 />
                 <input
-                  value={experience.tasks}
-                  onChange={this.changeExistingHandler.bind(this)}
+                  value={item.tasks}
+                  onChange={changeExistingHandler}
                   name="tasks"
                   type="text"
                   placeholder="Your main tasks"
                 />
                 <input
-                  value={experience.fromDate}
-                  onChange={this.changeExistingHandler.bind(this)}
+                  value={item.fromDate}
+                  onChange={changeExistingHandler}
                   name="fromDate"
                   type="text"
                   onFocus={(e) => {
@@ -159,8 +131,8 @@ export default class Experience extends React.Component {
                   placeholder="Company name"
                 />
                 <input
-                  value={experience.untilDate}
-                  onChange={this.changeExistingHandler.bind(this)}
+                  value={item.untilDate}
+                  onChange={changeExistingHandler}
                   name="untilDate"
                   type="text"
                   onFocus={(e) => {
@@ -176,32 +148,32 @@ export default class Experience extends React.Component {
           </ul>
           )}
           <input
-            value={companyName}
-            onChange={this.changeHandler.bind(this)}
+            value={experience.companyName}
+            onChange={changeHandler}
             name="companyName"
             id="company-name"
             type="text"
             placeholder="Company name"
           />
           <input
-            value={position}
-            onChange={this.changeHandler.bind(this)}
+            value={experience.position}
+            onChange={changeHandler}
             name="position"
             id="position"
             type="text"
             placeholder="Position"
           />
           <input
-            value={tasks}
-            onChange={this.changeHandler.bind(this)}
+            value={experience.tasks}
+            onChange={changeHandler}
             name="tasks"
             id="tasks"
             type="text"
             placeholder="Your main tasks"
           />
           <input
-            value={fromDate}
-            onChange={this.changeHandler.bind(this)}
+            value={experience.fromDate}
+            onChange={changeHandler}
             name="fromDate"
             id="from-date"
             type="text"
@@ -214,8 +186,8 @@ export default class Experience extends React.Component {
             placeholder="Start date"
           />
           <input
-            value={untilDate}
-            onChange={this.changeHandler.bind(this)}
+            value={experience.untilDate}
+            onChange={changeHandler}
             name="untilDate"
             id="until-date"
             type="text"
@@ -227,48 +199,47 @@ export default class Experience extends React.Component {
             }}
             placeholder="End date"
           />
-          <button type="button" data="add" onClick={this.addAnotherExperience.bind(this)}>Add another</button>
+          <button type="button" data="add" onClick={addAnotherExperience}>Add another</button>
           <button type="submit" data="submit">Submit</button>
-          <button type="button" data="back" onClick={this.getBack.bind(this)}>Back</button>
+          <button type="button" data="back" onClick={getBack}>Back</button>
         </form>
       );
-    } else {
-      content = (
-        <>
-          <table>
-            <thead>
-              <tr>
-                <th>Company</th>
-                <th>Position</th>
-                <th>Performed tasks</th>
-                <th>From, date</th>
-                <th>Until, date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {experiences.map((experience) => (
-                <tr key={`${experience.companyName}_${experience.position}`}>
-                  <td>{experience.companyName}</td>
-                  <td>{experience.position}</td>
-                  <td>{experience.tasks}</td>
-                  <td>{new Date(experience.fromDate).toLocaleDateString()}</td>
-                  <td>{new Date(experience.untilDate).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <button type="button" onClick={() => handleSection('experience')}>Edit</button>
-        </>
-      );
     }
-
     return (
-      <div id="experience">
-        <h2>Practical experience</h2>
-        {content}
-      </div>
+      <>
+        <table>
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Position</th>
+              <th>Performed tasks</th>
+              <th>From, date</th>
+              <th>Until, date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {experiences.map((item) => (
+              <tr key={`${item.companyName}_${item.position}`}>
+                <td>{item.companyName}</td>
+                <td>{item.position}</td>
+                <td>{item.tasks}</td>
+                <td>{new Date(item.fromDate).toLocaleDateString()}</td>
+                <td>{new Date(item.untilDate).toLocaleDateString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <button type="button" onClick={() => handleSection('experience')}>Edit</button>
+      </>
     );
-  }
+  };
+
+  return (
+    <div id="experience">
+      <h2>Practical experience</h2>
+      {createContent()}
+    </div>
+  );
 }
 
 Experience.propTypes = {
@@ -282,3 +253,5 @@ Experience.propTypes = {
 Experience.defaultProps = {
   experiences: [],
 };
+
+export default Experience;
