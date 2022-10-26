@@ -1,145 +1,111 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import propTypes from 'prop-types';
 import uniqid from 'uniqid';
 
-export default class Education extends React.Component {
-  constructor(props) {
-    super(props);
+/**
+ * Education component. Gets school *name*, *title* and *date*. Can be added several.
+ * @param {Map.<String, any>} props
+ * @param {String} props.section - name of the section
+ * @param {Array} props.education - array of educations from App, which have already been filled
+ */
+function Education(props) {
+  const {
+    section: propSection, education: oldEducations, handleInfo, handleSection, finished,
+  } = props;
 
-    const { section, education } = this.props;
+  const [education, setEducation] = useState({
+    schoolName: '',
+    schoolTitle: '',
+    schoolDate: '',
+    id: uniqid(),
+  });
+  const [educations, setEducations] = useState(oldEducations);
+  const [section, setSection] = useState(propSection);
 
-    this.state = {
-      schoolName: '',
-      schoolTitle: '',
-      schoolDate: '',
-      id: uniqid(),
-      schools: education,
-      section,
-    };
-  }
+  useEffect(() => {
+    handleInfo('education', educations);
+    handleSection(section);
+  }, [section]);
 
-  getBack() {
-    const { handleSection } = this.props;
-    handleSection('general');
-  }
+  const getBack = () => handleSection('general');
 
-  changeHandler(e) {
-    this.setState({
+  const changeHandler = (e) => {
+    setEducation({
+      ...education,
       [e.target.name]: e.target.value,
     });
-  }
+  };
 
-  /** Change existing schools in [school] by onChange */
-  changeExistingHandler(e) {
-    this.setState((prevState) => ({
-      schools: prevState.schools.map(
-        (school) => (school.id === e.target.parentElement.id
-          ? { ...school, [e.target.name]: e.target.value }
-          : school),
-      ),
-    }));
-  }
+  const changeExistingHandler = (e) => {
+    const { id } = e.target.parentElement;
+    setEducations((prevState) => {
+      const newState = prevState.map((item) => (
+        item.id === id
+          ? { ...item, [e.target.name]: e.target.value }
+          : item));
+      return newState;
+    });
+  };
 
-  /** Add existing school to state and add new inputs */
-  addAnotherSchool() {
-    const {
-      schools, schoolName, schoolTitle, schoolDate, section, id,
-    } = this.state;
+  const addAnotherSchool = () => {
+    const { schoolName, schoolDate, schoolTitle } = education;
 
-    if (!schoolDate || !schoolName || !schoolTitle) {
-      return;
+    if (schoolName && schoolDate && schoolTitle) {
+      setEducations((prevState) => prevState.concat(education));
+      setEducation({
+        schoolName: '',
+        schoolTitle: '',
+        schoolDate: '',
+        id: uniqid(),
+      });
     }
+  };
 
-    this.setState({
-      schools: schools.concat({
-        schoolName,
-        schoolTitle,
-        schoolDate,
-        id,
-      }),
-      section,
+  const submitHandler = (e) => {
+    e.preventDefault();
+
+    setEducations((prevState) => {
+      const { schoolDate, schoolName, schoolTitle } = education;
+      if (schoolDate && schoolName && schoolTitle) {
+        return (prevState.concat(education));
+      }
+      return prevState;
+    });
+    setEducation({
       schoolName: '',
       schoolTitle: '',
       schoolDate: '',
       id: uniqid(),
     });
-  }
+    setSection((prevState) => {
+      if (educations.length > 0) return 'experience';
+      return prevState;
+    });
+  };
 
-  submitHandler(e) {
-    e.preventDefault();
-
-    const {
-      schoolName, schoolTitle, schoolDate, id,
-    } = this.state;
-
-    /** If inputs are empty, check for anything in SCHOOLS. Else, ignore Submit. */
-    if (!schoolDate || !schoolName || !schoolTitle) {
-      // eslint-disable-next-line react/destructuring-assignment
-      if (this.state.schools.length < 1) {
-        alert('You have to input something');
-        return;
-      }
-
-      this.setState({
-        section: 'experience',
-      }, () => {
-        const { handleSection, handleInfo } = this.props;
-        const { section } = this.state;
-        const { schools } = this.state;
-
-        handleSection(section);
-        handleInfo('education', schools);
-      });
-    } else {
-      this.setState((prevState) => ({
-        schools: prevState.schools.concat({
-          schoolName,
-          schoolTitle,
-          schoolDate,
-          id,
-        }),
-        section: 'experience',
-      }), () => {
-        const { handleSection, handleInfo } = this.props;
-        const { section } = this.state;
-        const { schools } = this.state;
-
-        handleSection(section);
-        handleInfo('education', schools);
-      });
-    }
-  }
-
-  render() {
-    const {
-      schools, schoolName, schoolDate, schoolTitle,
-    } = this.state;
-
-    const { finished, handleSection } = this.props;
-
-    let content;
+  const createContent = () => {
     if (!finished) {
-      content = (
-        <form onSubmit={this.submitHandler.bind(this)}>
-          { schools.length > 0
+      return (
+        <form onSubmit={submitHandler}>
+          { educations.length > 0
               && (
               <ul>
                 <h2>Your education</h2>
-                {schools.map((school) => (
+                {educations.map((school) => (
                   <li key={school.id} id={school.id}>
                     <input
                       type="text"
                       name="schoolName"
                       value={school.schoolName}
                       placeholder="School name"
-                      onChange={this.changeExistingHandler.bind(this)}
+                      onChange={changeExistingHandler}
                     />
                     <input
                       type="text"
                       name="schoolTitle"
                       value={school.schoolTitle}
                       placeholder="Title"
-                      onChange={this.changeExistingHandler.bind(this)}
+                      onChange={changeExistingHandler}
                     />
                     <input
                       type="text"
@@ -152,7 +118,7 @@ export default class Education extends React.Component {
                       name="schoolDate"
                       value={school.schoolDate}
                       placeholder="Date"
-                      onChange={this.changeExistingHandler.bind(this)}
+                      onChange={changeExistingHandler}
                     />
                   </li>
                 ))}
@@ -162,18 +128,18 @@ export default class Education extends React.Component {
           <input
             type="text"
             name="schoolName"
-            value={schoolName || ''}
+            value={education.schoolName}
             id="school-name"
             placeholder="School name"
-            onChange={this.changeHandler.bind(this)}
+            onChange={changeHandler}
           />
           <input
             type="text"
             name="schoolTitle"
-            value={schoolTitle || ''}
+            value={education.schoolTitle}
             id="school-title"
             placeholder="Title"
-            onChange={this.changeHandler.bind(this)}
+            onChange={changeHandler}
           />
           <input
             type="text"
@@ -184,50 +150,49 @@ export default class Education extends React.Component {
               e.target.type = 'text';
             }}
             name="schoolDate"
-            value={schoolDate || ''}
+            value={education.schoolDate}
             id="school-date"
             placeholder="Date"
-            onChange={this.changeHandler.bind(this)}
+            onChange={changeHandler}
           />
 
-          <button type="button" data="add" onClick={this.addAnotherSchool.bind(this)}>Add another</button>
+          <button type="button" data="add" onClick={addAnotherSchool}>Add another</button>
           <button type="submit" data="submit">Submit</button>
-          <button type="button" data="back" onClick={this.getBack.bind(this)}>Back</button>
+          <button type="button" data="back" onClick={getBack}>Back</button>
         </form>
       );
-    } else {
-      content = (
-        <>
-          <table>
-            <thead>
-              <tr>
-                <th>School name</th>
-                <th>Title</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {schools.map((school) => (
-                <tr key={school.id}>
-                  <td>{school.schoolName}</td>
-                  <td>{school.schoolTitle}</td>
-                  <td>{new Date(school.schoolDate).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <button type="button" onClick={() => handleSection('education')}>Edit</button>
-        </>
-      );
     }
-
     return (
-      <div id="education">
-        <h2>Education</h2>
-        {content}
-      </div>
+      <>
+        <table>
+          <thead>
+            <tr>
+              <th>School name</th>
+              <th>Title</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {educations.map((school) => (
+              <tr key={school.id}>
+                <td>{school.schoolName}</td>
+                <td>{school.schoolTitle}</td>
+                <td>{new Date(school.schoolDate).toLocaleDateString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <button type="button" onClick={() => handleSection('education')}>Edit</button>
+      </>
     );
-  }
+  };
+
+  return (
+    <div id="education">
+      <h2>Education</h2>
+      {createContent()}
+    </div>
+  );
 }
 
 Education.propTypes = {
@@ -235,9 +200,7 @@ Education.propTypes = {
   handleSection: propTypes.func.isRequired,
   handleInfo: propTypes.func.isRequired,
   finished: propTypes.bool.isRequired,
-  education: propTypes.arrayOf(propTypes.shape),
+  education: propTypes.arrayOf(propTypes.shape).isRequired,
 };
 
-Education.defaultProps = {
-  education: [],
-};
+export default Education;

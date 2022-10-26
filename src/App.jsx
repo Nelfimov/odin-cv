@@ -27,10 +27,19 @@ export default class App extends React.Component {
     };
   }
 
-  handleSection = (string) => {
-    this.setState({ section: string });
+  /**
+   * Change component.
+   * @param {string} section - change component;
+   */
+  handleSection = (section) => {
+    this.setState({ section });
   };
 
+  /**
+   * Update info in the main app.
+   * @param {String} key - which key to update. Choose between *general*, *education*, *experience*;
+   * @param {(Array | Map.<String, String>)} value - new value;
+   */
   handleInfo = (key, value) => {
     this.setState({ [key]: value }, () => {
       console.log(this.state);

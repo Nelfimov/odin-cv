@@ -3,6 +3,7 @@ import propTypes from 'prop-types';
 
 /**
  * General information component: name, email, date of birth
+ * @param {Map.<String, any>} props
  */
 function General(props) {
   const {
@@ -26,7 +27,7 @@ function General(props) {
 
   useEffect(() => {
     handleInfo('general', generals);
-    handleSection(section);
+    if (section !== 'general') handleSection(section);
   }, [generals]);
 
   const submitHandler = (e) => {
